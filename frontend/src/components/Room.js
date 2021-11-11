@@ -10,6 +10,7 @@ export default class Room extends Component {
             guestCanPause: false,
             isHost: false,
             showSettings: false,
+            NoHost: true,
         };
         this.roomCode = this.props.match.params.roomCode;
         this.getRoomDetails();
@@ -18,10 +19,15 @@ export default class Room extends Component {
         this._updateShowSettings = this._updateShowSettings.bind(this);
         this._renderSettings = this._renderSettings.bind(this);
         this._renderSettingsButton = this._renderSettingsButton.bind(this);
+        this._host = this._host.bind(this);
     }
 
     getRoomDetails() {
-        fetch("/api/get_room" + "?code=" + this.roomCode)
+         const requestOptions = {
+            method: "GET",
+            credentials: 'omit',
+        };
+        fetch("/api/get_room" + "?code=" + this.roomCode, requestOptions)
             .then((response) => {
                 if (!response.ok) {
                     this.props.leaveRoomCallback();
@@ -41,6 +47,7 @@ export default class Room extends Component {
     _leaveButtonPressed() {
         const requestOptions = {
             method: "POST",
+            credentials: 'omit',
             headers: {"Content-Type": "application/json"},
         };
         fetch('/api/leave_room', requestOptions)
@@ -88,6 +95,14 @@ export default class Room extends Component {
         );
     }
 
+    _host() {
+        <Grid item xs={12} align="center">
+                    <Typography variant="h6" component="h6">
+                        Host: {this.state.isHost.toString()}
+                    </Typography>
+                </Grid>
+    }
+
     render() {
         if (this.state.showSettings) {
             return this._renderSettings();
@@ -109,11 +124,7 @@ export default class Room extends Component {
                         Guest Can Pause: {this.state.guestCanPause.toString()}
                     </Typography>
                 </Grid>
-                <Grid item xs={12} align="center">
-                    <Typography variant="h6" component="h6">
-                        Host: {this.state.isHost.toString()}
-                    </Typography>
-                </Grid>
+                {!this.NoHost ? this._host() : ""}
                 {this.state.isHost ? this._renderSettingsButton() : null}
                 <Grid item xs={12} align="center">
                     <Button color="secondary"

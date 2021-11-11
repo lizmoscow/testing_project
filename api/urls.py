@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from .views import RoomView, CreateRoomView, GetRoom, JoinRoom, UserInRoom, LeaveRoom, UpdateRoom
 
 
@@ -10,4 +10,6 @@ urlpatterns = [
     path('user_in_room', UserInRoom.as_view()),
     path('leave_room', LeaveRoom.as_view()),
     path('update_room', UpdateRoom.as_view()),
+    path('dj-rest-auth/', include('dj_rest_auth.urls')),
+    path('dj-rest-auth/registration/', include('dj_rest_auth.registration.urls')),
 ]

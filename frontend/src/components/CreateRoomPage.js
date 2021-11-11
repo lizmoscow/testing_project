@@ -53,6 +53,7 @@ export  default class CreateRoomPage extends Component {
     handleRoomButtonPressed() {
         const requestOptions = {
             method: "POST",
+            credentials: 'omit',
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
                 votes_to_skip: this.state.votesToSkip,
@@ -89,6 +90,7 @@ export  default class CreateRoomPage extends Component {
     _handleUpdateButtonPressed() {
         const requestOptions = {
             method: "PATCH",
+            credentials: 'omit',
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
                 votes_to_skip: this.state.votesToSkip,
