@@ -24,13 +24,14 @@ export  default class RoomJoinPage extends Component {
                 </Grid>
                 <Grid item xs={12} align="center">
                     <TextField
-                        error={this.state.error}
+                        error={this.state.error.length > 0}
                         label="Code"
                         placeholder="Enter a Room Code"
                         value={this.state.roomCode}
                         helperText={this.state.error}
                         variant="outlined"
                         onChange={this._handleTextFieldChange}
+                        name="roomName"
                     />
                 </Grid>
                 <Grid item xs={12}  align="center">

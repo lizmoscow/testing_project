@@ -161,12 +161,14 @@ export  default class CreateRoomPage extends Component {
                             value="true"
                             control={<Radio color="primary"/>}
                             label="Play/Pause"
-                            labelPlacement="bottom"/>
+                            labelPlacement="bottom"
+                            name="giveGuestControl"/>
                         <FormControlLabel
                             value="false"
                             control={<Radio color="secondary"/>}
                             label="No Control"
-                            labelPlacement="bottom"/>
+                            labelPlacement="bottom"
+                            name="refuseGuestControl"/>
                     </RadioGroup>
                 </FormControl>
             </Grid>
@@ -181,6 +183,7 @@ export  default class CreateRoomPage extends Component {
                                    style: {textAlign: "center"}
                                }}
                                data-testid="NumOfVotes"
+                               name="NumOfVotes"
                     />
                     <FormHelperText>
                             Votes Required to Skip

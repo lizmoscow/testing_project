@@ -23,6 +23,7 @@ export  default class LogIn extends Component {
         this._handlePasswordTextFieldChange = this._handlePasswordTextFieldChange.bind(this);
         this._loginButtonPressed = this._loginButtonPressed.bind(this);
         this._optionButtonPressed = this._optionButtonPressed.bind(this);
+        this._backButtonPressed = this._backButtonPressed.bind(this);
     }
 
     render() {
@@ -57,6 +58,7 @@ export  default class LogIn extends Component {
                         variant="outlined"
                         onChange={this._handleUsernameTextFieldChange}
                         data-testid="UsernameField"
+                        name="username"
                     />
                 </Grid>
                 <Grid item xs={12} align="center">
@@ -68,25 +70,41 @@ export  default class LogIn extends Component {
                         variant="outlined"
                         type="password"
                         onChange={this._handlePasswordTextFieldChange}
+                        name="password"
                     />
                 </Grid>
                 <Grid item xs={12}  align="center">
-                    <Button variant="contained" color="primary" onClick={this._loginButtonPressed} data-testid="LogInButton">
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={this._loginButtonPressed}
+                        data-testid="LogInButton"
+                        name="signin">
                         {(!this.state.signUp) ? "Sign In" : "Sign Up"}
                     </Button>
                 </Grid>
                 <Grid item xs={12}  align="center">
-                    <Button variant="contained" color="primary" onClick={this._optionButtonPressed} data-testid="SwitchModeButton">
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={this._optionButtonPressed}
+                        data-testid="SwitchModeButton"
+                        name="switch">
                         {(!this.state.signUp) ? "Don't Have an Account Yet?" : "Already Have an Account?"}
                     </Button>
                 </Grid>
                 <Grid item xs={12}  align="center">
-                    <Button variant="contained" color="secondary" to="/" component={Link}>
+                    <Button variant="contained" color="secondary" onClick={this._backButtonPressed}>
                         Back
                     </Button>
                 </Grid>
             </Grid>
         );
+    }
+
+    _backButtonPressed() {
+            this.props.logInCallback();
+            this.props.history.push('/')
     }
 
     _handleUsernameTextFieldChange(e) {
@@ -111,13 +129,14 @@ export  default class LogIn extends Component {
                 username: this.state.username,
                 password: this.state.password,
             }),
-        };
+            };
             fetch("/api/dj-rest-auth/login/", requestOptions)
             .then((response) => {
                 if (response.ok) {
                     this.setState({
                         successMsg: "Signed in in successfully"
                     });
+                    localStorage.setItem("key", response.json().key)
                 }
                 else {
                     response.json().then((data) => {
@@ -133,12 +152,10 @@ export  default class LogIn extends Component {
                         this.setState({
                             errorMsg: data.non_field_errors,
                         });
+                        localStorage.setItem("key", data.key)
                     })
                 }
-                return response.json()
-            }).then((data) => {
-                localStorage.setItem("key", data.key)
-        }).then((data) => {
+            }).then(() => {
             this.props.logInCallback();
             this.props.history.push('/')});
         }
@@ -151,13 +168,14 @@ export  default class LogIn extends Component {
                 password1: this.state.password,
                 password2: this.state.password,
             }),
-        };
+            };
             fetch("/api/dj-rest-auth/registration/", requestOptions)
             .then((response) => {
                 if (response.ok) {
                     this.setState({
                         successMsg: "Signed up in successfully"
                     });
+                    localStorage.setItem("key", response.json().key)
                 }
                 else {
                     response.json().then((data) => {
@@ -173,15 +191,10 @@ export  default class LogIn extends Component {
                         this.setState({
                             errorMsg: data.non_field_errors,
                         });
+                        localStorage.setItem("key", data.key)
                     })
                 }
-            }).then((response) => {
-                if (response.ok) {
-                    localStorage.setItem("key", response.json().key)
-                }
-        }).then((data) => {
-            this.props.logInCallback();
-            this.props.history.push('/')});
+            });
         }
     }
 
