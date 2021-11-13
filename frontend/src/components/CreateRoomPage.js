@@ -153,9 +153,7 @@ export  default class CreateRoomPage extends Component {
             <Grid item xs={12} align="center">
                 <FormControl component="fieldset">
                     <FormHelperText>
-                        <div align='center'>
                             Guest Control of Playback State
-                        </div>
                     </FormHelperText>
                     <RadioGroup row defaultValue={this.props.guestCanPause.toString()}
                     onChange={this.handleGuestCanPauseChange}>
@@ -178,13 +176,14 @@ export  default class CreateRoomPage extends Component {
                                type="number"
                                onChange={this.handleVotesChange}
                                defaultValue={this.state.votesToSkip}
-                               inputProps={{min: 1,
-                               style: {textAlign: "center"}}}
+                               inputProps={{
+                                   min: 1,
+                                   style: {textAlign: "center"}
+                               }}
+                               data-testid="NumOfVotes"
                     />
                     <FormHelperText>
-                        <div align="center">
                             Votes Required to Skip
-                        </div>
                     </FormHelperText>
                 </FormControl>
             </Grid>

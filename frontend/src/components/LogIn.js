@@ -29,7 +29,7 @@ export  default class LogIn extends Component {
         return (
             <Grid container spacing={1}>
                 <Grid item xs={12} align="center">
-                <Collapse in={this.state.errorMsg || this.state.successMsg}>
+                <Collapse in={this.state.errorMsg.length > 0 || this.state.successMsg.length > 0} data-testid="Message">
                     {this.state.successMsg
                         ? (<Alert severity="success"
                                   onClose={() => {
@@ -44,23 +44,24 @@ export  default class LogIn extends Component {
                 </Collapse>
             </Grid>
                 <Grid item xs={12} align="center">
-                    <Typography variant="h4" component="h4">
+                    <Typography variant="h4" component="h4" data-testid="Title">
                         {(!this.state.signUp) ? "Sign In" : "Sign Up"}
                     </Typography>
                 </Grid>
                 <Grid item xs={12} align="center">
                     <TextField
-                        error={this.state.error}
+                        error={this.state.error.length > 0}
                         label="Username"
                         placeholder="Enter a username"
                         value={this.state.username}
                         variant="outlined"
                         onChange={this._handleUsernameTextFieldChange}
+                        data-testid="UsernameField"
                     />
                 </Grid>
                 <Grid item xs={12} align="center">
                     <TextField
-                        error={this.state.error}
+                        error={this.state.error.length > 0}
                         label="Password"
                         placeholder="Enter a password"
                         value={this.state.password}
@@ -70,12 +71,12 @@ export  default class LogIn extends Component {
                     />
                 </Grid>
                 <Grid item xs={12}  align="center">
-                    <Button variant="contained" color="primary" onClick={this._loginButtonPressed}>
+                    <Button variant="contained" color="primary" onClick={this._loginButtonPressed} data-testid="LogInButton">
                         {(!this.state.signUp) ? "Sign In" : "Sign Up"}
                     </Button>
                 </Grid>
                 <Grid item xs={12}  align="center">
-                    <Button variant="contained" color="primary" onClick={this._optionButtonPressed}>
+                    <Button variant="contained" color="primary" onClick={this._optionButtonPressed} data-testid="SwitchModeButton">
                         {(!this.state.signUp) ? "Don't Have an Account Yet?" : "Already Have an Account?"}
                     </Button>
                 </Grid>
