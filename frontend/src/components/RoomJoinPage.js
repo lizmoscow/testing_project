@@ -18,7 +18,7 @@ export  default class RoomJoinPage extends Component {
         return (
             <Grid container spacing={1}>
                 <Grid item xs={12} align="center">
-                    <Typography variant="h4" component="h4">
+                    <Typography variant="h4" component="h4" id="page-title">
                         Join a Room
                     </Typography>
                 </Grid>
@@ -35,12 +35,12 @@ export  default class RoomJoinPage extends Component {
                     />
                 </Grid>
                 <Grid item xs={12}  align="center">
-                    <Button variant="contained" color="primary" onClick={this._roomButtonPressed}>
+                    <Button variant="contained" color="primary" onClick={this._roomButtonPressed} name="enter">
                         Enter Room
                     </Button>
                 </Grid>
                 <Grid item xs={12}  align="center">
-                    <Button variant="contained" color="secondary" to="/" component={Link}>
+                    <Button variant="contained" color="secondary" to="/" component={Link} id="back">
                         Back
                     </Button>
                 </Grid>

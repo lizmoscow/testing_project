@@ -30,7 +30,7 @@ export  default class LogIn extends Component {
         return (
             <Grid container spacing={1}>
                 <Grid item xs={12} align="center">
-                <Collapse in={this.state.errorMsg.length > 0 || this.state.successMsg.length > 0} data-testid="Message">
+                <Collapse in={this.state.errorMsg.length > 0 || this.state.successMsg.length > 0} data-testid="Message" id="message">
                     {this.state.successMsg
                         ? (<Alert severity="success"
                                   onClose={() => {
@@ -45,7 +45,7 @@ export  default class LogIn extends Component {
                 </Collapse>
             </Grid>
                 <Grid item xs={12} align="center">
-                    <Typography variant="h4" component="h4" data-testid="Title">
+                    <Typography variant="h4" component="h4" data-testid="Title" id="page-title">
                         {(!this.state.signUp) ? "Sign In" : "Sign Up"}
                     </Typography>
                 </Grid>
@@ -94,7 +94,7 @@ export  default class LogIn extends Component {
                     </Button>
                 </Grid>
                 <Grid item xs={12}  align="center">
-                    <Button variant="contained" color="secondary" onClick={this._backButtonPressed}>
+                    <Button variant="contained" color="secondary" onClick={this._backButtonPressed} id="back">
                         Back
                     </Button>
                 </Grid>

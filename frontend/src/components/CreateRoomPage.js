@@ -71,7 +71,8 @@ export  default class CreateRoomPage extends Component {
                 <Grid item xs={12} align="center">
                     <Button color="primary"
                             variant="contained"
-                            onClick={this.handleRoomButtonPressed}>
+                            onClick={this.handleRoomButtonPressed}
+                            name="create">
                         Create a Room
                     </Button>
                 </Grid>
@@ -79,7 +80,7 @@ export  default class CreateRoomPage extends Component {
                     <Button color="secondary"
                             variant="contained"
                             to="/"
-                            component={Link}>
+                            component={Link} id="back">
                         Back
                     </Button>
                 </Grid>
@@ -146,7 +147,7 @@ export  default class CreateRoomPage extends Component {
                 </Collapse>
             </Grid>
             <Grid item xs={12} align="center">
-                <Typography component='h4' variant='h4'>
+                <Typography component='h4' variant='h4' id="page-title">
                     {title}
                 </Typography>
             </Grid>

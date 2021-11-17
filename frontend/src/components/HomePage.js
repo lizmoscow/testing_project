@@ -83,13 +83,13 @@ export  default class HomePage extends Component {
     _logInButton() {
         if (this.state.username == "") {
             return (
-                <Button color="primary" to='/login' component={Link}>
+                <Button color="primary" to='/login' component={Link} id="login-button">
                     Log in
                 </Button>
             );
         }
         return (
-            <Button color="primary" to='/login' onClick={this._logOut}>
+            <Button color="primary" to='/login' onClick={this._logOut} id="login-button">
                     Log out
             </Button>
         );
@@ -99,7 +99,7 @@ export  default class HomePage extends Component {
         return (
             <Grid container spacing={3}>
                 <Grid item xs={12} align="center">
-                    <Typography variant="h3" compact="h3" type="Title">
+                    <Typography variant="h3" compact="h3" id="page-title">
                         {"House Party" + ((this.state.username != "") ? " with " +
                             this.state.username : "")}
                     </Typography>
@@ -108,10 +108,10 @@ export  default class HomePage extends Component {
                     <ButtonGroup disableElevation
                                  variant="contained"
                                  color="primary">
-                        <Button color="primary" to='/join' component={Link}>
+                        <Button color="primary" to='/join' component={Link} id="join-group">
                             Join a Room
                         </Button>
-                        <Button color="secondary" to='/create' component={Link}>
+                        <Button color="secondary" to='/create' component={Link} id="create-group">
                             Create a Room
                         </Button>
                         {this._logInButton()}

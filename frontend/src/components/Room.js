@@ -110,17 +110,17 @@ export default class Room extends Component {
         return (
             <Grid container spacing={1}>
                 <Grid item xs={12} align="center">
-                    <Typography variant="h4" component="h4">
+                    <Typography variant="h4" component="h4" name={"code"}>
                         Code: {this.roomCode}
                     </Typography>
                 </Grid>
                 <Grid item xs={12} align="center">
-                    <Typography variant="h6" component="h6">
+                    <Typography variant="h6" component="h6" name="votes">
                         Votes: {this.state.votesToSkip}
                     </Typography>
                 </Grid>
                 <Grid item xs={12} align="center">
-                    <Typography variant="h6" component="h6">
+                    <Typography variant="h6" component="h6" name="pause">
                         Guest Can Pause: {this.state.guestCanPause.toString()}
                     </Typography>
                 </Grid>
@@ -129,7 +129,7 @@ export default class Room extends Component {
                 <Grid item xs={12} align="center">
                     <Button color="secondary"
                             variant="contained"
-                    onClick={this._leaveButtonPressed}>
+                    onClick={this._leaveButtonPressed} name="leave">
                         Leave Room
                     </Button>
                 </Grid>
