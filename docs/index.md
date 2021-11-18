@@ -1,37 +1,5 @@
-## Welcome to GitHub Pages
+#Selenium vs Cypress
 
-You can use the [editor on GitHub](https://github.com/lizmoscow/testing_project/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
+Для end-to-end тестирования данного проекта мною были использованы два фреймворка: Cypress и Selenium. Рассмотрим основные различия между ними.  Главным отличием Cypress и Selenium является их способ взаимодействия с браузером: в то время как Selenium общается с браузером через специальные драйверы, Cypress взаимодействует с браузером напрямую, что, в свою очередь, ведет к более быстрому выполнению тестов. Однако, у такой архитектуры Cypress есть и недостатки: например, отсутсвие одновременной поддержки нескольких вкладок и браузеров. Cypress легок в установке, однако его коммьюнити не такое большое и зрелое как у Selenium в силу свой новизны.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/lizmoscow/testing_project/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+С перспективы отсутствия моего опыта (я почти не занималась тестированием, и не пользовалась JavaScript), Cypress более легок в использовании, нежели Selenium (хотя если бы я лучше разобралась в Selenium с самого начала и писала бы тесты для него не на JavaScript, а на Python, мое мнение могло бы быть радикально противоположным): его было легче установить, он (на мой вкус) обладает более приятным синтаксисом и быстрее работает (сами тесты, а не загрузка графического интерфейса). Cypress использует графический интерфейс, что вызывает у меня двойственные чувства: с одной стороны, удобно видеть информацию о выполнении теста и произошедших ошибок рядом с самой веб-страницей, с другой стороны, не удобно ждать загрузки графического интерфейса, переключать окна и руками выбирать test-suit. Еще раздражает автоматический перезапуск тестов (хотя я читала, что кому-то это нравится). С Selenium я работала через интерфейс командной строки и это было намного эффективнее.
