@@ -21,6 +21,8 @@ export  default class HomePage extends Component {
         this._logInButton = this._logInButton.bind(this);
         this._logOut = this._logOut.bind(this);
         this.getUsername = this.getUsername.bind(this);
+        this._joinButton = this._joinButton.bind(this);
+        this._createButton = this._createButton.bind(this);
     }
 
     async componentDidMount() {
@@ -32,24 +34,20 @@ export  default class HomePage extends Component {
             .then((response) => response.json())
             .then((data) => {this.setState({
                 roomCode: data.code,
+                });
             });
-            });
-        this.getUsername();
+
+        const uname = localStorage.getItem('username');
+        console.log("username is " + uname)
+        this.setState({
+            username: (uname == null) ? "" : uname,
+        });
     }
 
-    getUsername() {
-            fetch("/api/dj-rest-auth/user/")
-            .then((response) => response.json()
-            )
-            .then((data) => {
-                if (data.username) {
-                this.setState({
-                    username: data.username,
-                });
-            }
+    getUsername(username) {
+        this.setState({
+            username: username,
         });
-
-
     }
 
     clearRoomCode() {
@@ -59,25 +57,11 @@ export  default class HomePage extends Component {
     }
 
     _logOut() {
-        const requestOptions = {
-            method: "GET",
-            headers: {"Content-Type": "application/json",
-                'Accept': 'application/json',}
-        };
-        fetch("/api/dj-rest-auth/logout/", requestOptions)
-            .then((response) => {
-            if (response.ok) {
-                localStorage.setItem("key", "");
-                this.setState({
-                    username: "",
-                });
-            }
-            else {
-                this.setState({
-                    error: "Can not log out"
-                });
-            }
-        }).catch((error) => { console.log(code); });
+        localStorage.removeItem('key')
+        localStorage.removeItem('username')
+        this.setState({
+            username: "",
+        });
     }
 
     _logInButton() {
@@ -95,6 +79,31 @@ export  default class HomePage extends Component {
         );
     }
 
+
+    _joinButton() {
+        if (localStorage.getItem('key') != null) {
+            return(
+                <Button color="primary" to='/join' component={Link} id="join-group">
+                                Join a Room
+                </Button>
+            )
+        }
+        return("");
+    }
+
+
+    _createButton() {
+        if (localStorage.getItem('key') != null) {
+            return(
+                <Button color="secondary" to='/create' component={Link} id="create-group">
+                    Create a Room
+                </Button>
+            )
+        }
+        return("");
+    }
+
+
     _renderHomePage() {
         return (
             <Grid container spacing={3}>
@@ -108,12 +117,8 @@ export  default class HomePage extends Component {
                     <ButtonGroup disableElevation
                                  variant="contained"
                                  color="primary">
-                        <Button color="primary" to='/join' component={Link} id="join-group">
-                            Join a Room
-                        </Button>
-                        <Button color="secondary" to='/create' component={Link} id="create-group">
-                            Create a Room
-                        </Button>
+                        {this._joinButton()}
+                        {this._createButton()}
                         {this._logInButton()}
                     </ButtonGroup>
                 </Grid>

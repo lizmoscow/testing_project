@@ -6,9 +6,12 @@ import {Link} from "react-router-dom";
 export  default class RoomJoinPage extends Component {
     constructor(props) {
         super(props);
+        let token = localStorage.getItem('key');
+        token = (token == null) ? "" : token;
         this.state = {
           roomCode: "",
           error: "",
+            token: token,
         };
         this._handleTextFieldChange = this._handleTextFieldChange.bind(this);
         this._roomButtonPressed = this._roomButtonPressed.bind(this);
@@ -57,8 +60,9 @@ export  default class RoomJoinPage extends Component {
     _roomButtonPressed() {
         const requestOptions = {
             method: "POST",
-            credentials: 'omit',
-            headers: {"Content-Type": "application/json"},
+            //credentials: 'omit',
+            headers: {"Content-Type": "application/json",
+                "Authorization": "Token " +  this.state.token},
             body: JSON.stringify({
                 code: this.state.roomCode,
             }),
@@ -70,7 +74,7 @@ export  default class RoomJoinPage extends Component {
             }
             else {
                 this.setState({
-                    error: "Room Not Found"
+                    error: "Room is unavailable"
                 });
             }
         }).catch((error) => { console.log(code); });

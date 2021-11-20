@@ -3,7 +3,6 @@ from django.urls import reverse
 from django.conf import settings
 from api.models import Room
 from api.serializers import RoomSerializer
-from api.views import GetRoom
 
 
 class RoomTestCase(TestCase):
@@ -93,7 +92,7 @@ class JoinRoomTestCase(TestCase):
         response = self.client.post(reverse('join_room'), {'code': 'abcdef'})
         self.assertEqual(response.status_code, 400)
 
-    def test_join_room_incorrect_data_existing_code(self):
+    def test_join_room_correct_data_existing_code(self):
         Room.objects.create(code='ABCDEF', host='Alice', guest_can_pause=False, votes_to_skip=6)
         response = self.client.post(reverse('join_room'), {'code': 'ABCDEF'})
         session = self.client.session

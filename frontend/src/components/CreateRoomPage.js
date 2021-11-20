@@ -26,9 +26,14 @@ export  default class CreateRoomPage extends Component {
 
     constructor(props) {
         super(props);
+        let token = localStorage.getItem('key');
+        token = (token == null) ? "" : token;
         this.state = {
             guestCanPause : this.props.guestCanPause,
             votesToSkip: this.props.votesToSkip,
+            token: token,
+            errorMsg: this.props.errorMsg,
+            successMsg: this.props.successMsg,
         };
         this.handleRoomButtonPressed = this.handleRoomButtonPressed.bind(this);
         this.handleVotesChange = this.handleVotesChange.bind(this);
@@ -53,8 +58,9 @@ export  default class CreateRoomPage extends Component {
     handleRoomButtonPressed() {
         const requestOptions = {
             method: "POST",
-            credentials: 'omit',
-            headers: {"Content-Type": "application/json"},
+            //credentials: 'omit',
+            headers: {"Content-Type": "application/json",
+                "Authorization": "Token " + this.state.token},
             body: JSON.stringify({
                 votes_to_skip: this.state.votesToSkip,
                 guest_can_pause: this.state.guestCanPause,
@@ -91,8 +97,9 @@ export  default class CreateRoomPage extends Component {
     _handleUpdateButtonPressed() {
         const requestOptions = {
             method: "PATCH",
-            credentials: 'omit',
-            headers: {"Content-Type": "application/json"},
+            //credentials: 'omit',
+            headers: {"Content-Type": "application/json",
+                "Authorization": "Token " + this.state.token},
             body: JSON.stringify({
                 votes_to_skip: this.state.votesToSkip,
                 guest_can_pause: this.state.guestCanPause,
@@ -132,7 +139,7 @@ export  default class CreateRoomPage extends Component {
 
         return <Grid container spacing={1}>
             <Grid item xs={12} align="center">
-                <Collapse in={this.state.errorMsg || this.state.successMsg}>
+                <Collapse in={this.state.errorMsg.length > 0 || this.state.successMsg.length > 0}>
                     {this.state.successMsg
                         ? (<Alert severity="success"
                                   onClose={() => {
@@ -159,13 +166,13 @@ export  default class CreateRoomPage extends Component {
                     <RadioGroup row defaultValue={this.props.guestCanPause.toString()}
                     onChange={this.handleGuestCanPauseChange}>
                         <FormControlLabel
-                            value="true"
+                            value={(this.props.guestCanPause) ? "true" : "false"}
                             control={<Radio color="primary"/>}
                             label="Play/Pause"
                             labelPlacement="bottom"
                             name="giveGuestControl"/>
                         <FormControlLabel
-                            value="false"
+                            value={(this.props.guestCanPause) ? "false" : "true"}
                             control={<Radio color="secondary"/>}
                             label="No Control"
                             labelPlacement="bottom"

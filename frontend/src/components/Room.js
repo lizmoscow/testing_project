@@ -5,12 +5,15 @@ import CreateRoomPage from "./CreateRoomPage";
 export default class Room extends Component {
     constructor(props) {
         super(props);
+        let token = localStorage.getItem('key');
+        token = (token == null) ? "" : token;
         this.state = {
             votesToSkip: 2,
             guestCanPause: false,
             isHost: false,
             showSettings: false,
             NoHost: true,
+            token: token,
         };
         this.roomCode = this.props.match.params.roomCode;
         this.getRoomDetails();
@@ -26,6 +29,7 @@ export default class Room extends Component {
          const requestOptions = {
             method: "GET",
             credentials: 'omit',
+            headers: {"Authorization": "Token " + this.state.token}
         };
         fetch("/api/get_room" + "?code=" + this.roomCode, requestOptions)
             .then((response) => {
@@ -48,7 +52,8 @@ export default class Room extends Component {
         const requestOptions = {
             method: "POST",
             credentials: 'omit',
-            headers: {"Content-Type": "application/json"},
+            headers: {"Content-Type": "application/json",
+                "Authorization": "Token " + this.state.token},
         };
         fetch('/api/leave_room', requestOptions)
             .then((_response) => {
@@ -96,11 +101,13 @@ export default class Room extends Component {
     }
 
     _host() {
-        <Grid item xs={12} align="center">
+        return(
+            <Grid item xs={12} align="center">
                     <Typography variant="h6" component="h6">
                         Host: {this.state.isHost.toString()}
                     </Typography>
                 </Grid>
+            )
     }
 
     render() {

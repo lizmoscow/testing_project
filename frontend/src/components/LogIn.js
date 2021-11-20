@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import {TextField, Button, Grid, Typography, Collapse} from "@material-ui/core";
-import {Link} from "react-router-dom";
 import {Alert} from "@material-ui/lab";
 
 
@@ -103,8 +102,9 @@ export  default class LogIn extends Component {
     }
 
     _backButtonPressed() {
-            this.props.logInCallback();
-            this.props.history.push('/')
+        const uname = localStorage.getItem('username');
+        this.props.logInCallback((uname == null) ? "" : uname);
+        this.props.history.push('/')
     }
 
     _handleUsernameTextFieldChange(e) {
@@ -130,34 +130,27 @@ export  default class LogIn extends Component {
                 password: this.state.password,
             }),
             };
-            fetch("/api/dj-rest-auth/login/", requestOptions)
+            fetch("/api/token-auth/", requestOptions)
             .then((response) => {
                 if (response.ok) {
                     this.setState({
                         successMsg: "Signed in in successfully"
                     });
-                    localStorage.setItem("key", response.json().key)
+                    response.json().then((data) => {
+                        localStorage.setItem("key", data.token)
+                        localStorage.setItem("username", this.state.username)
+                        this.props.logInCallback(this.state.username);
+                        this.props.history.push('/')
+                    })
                 }
                 else {
                     response.json().then((data) => {
-                        if (data.password)
                         this.setState({
-                            errorMsg: data.password,
+                            errorMsg: "Invalid user or password"
                         });
-                        if (data.username)
-                        this.setState({
-                            errorMsg: data.username,
-                        });
-                        if (data.non_field_errors)
-                        this.setState({
-                            errorMsg: data.non_field_errors,
-                        });
-                        localStorage.setItem("key", data.key)
                     })
                 }
-            }).then(() => {
-            this.props.logInCallback();
-            this.props.history.push('/')});
+            });
         }
         else {
             const requestOptions = {
@@ -165,33 +158,25 @@ export  default class LogIn extends Component {
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
                 username: this.state.username,
-                password1: this.state.password,
-                password2: this.state.password,
+                password: this.state.password,
             }),
             };
-            fetch("/api/dj-rest-auth/registration/", requestOptions)
+            fetch("/api/token-reg/", requestOptions)
             .then((response) => {
                 if (response.ok) {
                     this.setState({
                         successMsg: "Signed up in successfully"
                     });
-                    localStorage.setItem("key", response.json().key)
+                    response.json().then((data) => {
+                        localStorage.setItem("key", data.token)
+                        localStorage.setItem("username", data.username)
+                    })
                 }
                 else {
                     response.json().then((data) => {
-                        if (data.password1)
                         this.setState({
-                            errorMsg: data.password1,
+                            errorMsg: "Invalid user or password"
                         });
-                        if (data.username)
-                        this.setState({
-                            errorMsg: data.username,
-                        });
-                        if (data.non_field_errors)
-                        this.setState({
-                            errorMsg: data.non_field_errors,
-                        });
-                        localStorage.setItem("key", data.key)
                     })
                 }
             });

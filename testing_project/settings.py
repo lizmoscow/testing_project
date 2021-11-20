@@ -41,12 +41,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'frontend.apps.FrontendConfig',
-    'dj_rest_auth',
+    #'dj_rest_auth',
     'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'dj_rest_auth.registration',
+    #'dj_rest_auth.registration',
 ]
 
 MIDDLEWARE = [
@@ -135,6 +135,13 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SITE_ID = 1
+#SITE_ID = 1
 
-ACCOUNT_LOGOUT_ON_GET = True
+#ACCOUNT_LOGOUT_ON_GET = True
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
