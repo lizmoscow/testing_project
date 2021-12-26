@@ -4,7 +4,7 @@ This is a project for the software-testing course
 
 gitPages: https://lizmoscow.github.io/testing_project/
 
-###To run tests:
+##To run tests:
 *   Backend tests: `python3 manage.py test`
 	* Specific test case: `python3 manage.py test api.tests.<TestCaseName>`
 	* Specific test: `python3 manage.py test api.tests.<TestCaseName>.<TestName>`
@@ -12,7 +12,7 @@ gitPages: https://lizmoscow.github.io/testing_project/
 	* Component and e2e tests with Selenide: `npm run test`
 	* e2e tests with Cypress: `npm run e2e`
 	
-###Tests that have yet to be written:
+##Tests that have yet to be written:
 *	Component tests:
 	 * Frontend:
 	   * Home page (updating username, logging out, rendering buttons "Join Room", "Log in" / "Log out" and "Create a Room" depending on whether a user has been  authenticated or not)
@@ -27,5 +27,5 @@ gitPages: https://lizmoscow.github.io/testing_project/
 	 * Trying to register with incorrect / already existing data
 	 * Visiting pages Room, Create a Room, Edit the room as an unauthorised guest
 	 	
-###Test documentation 
+##Test documentation 
 Documentation for api module is located in file `api/documentation.md` generated with `inkpot` library
