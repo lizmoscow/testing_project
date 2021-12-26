@@ -65,7 +65,7 @@ export  default class HomePage extends Component {
     _joinButton() {
         if (localStorage.getItem('key') != null) {
             return(
-                <Button color="primary" to='/join' component={Link} id="join-group">
+                <Button color="primary" to='/join' component={Link} id='join-group'>
                                 Join a Room
                 </Button>
             )

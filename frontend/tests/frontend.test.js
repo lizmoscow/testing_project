@@ -16,77 +16,6 @@ describe("Check main functionality", () => {
   })
 
 
-  it("Loads successfully", () => {
-    driver.get('http://127.0.0.1:8000/');
-
-    const element = driver.findElement(By.id('page-title'));
-    element.getText().then(function(text) {
-      expect(text).toBe('House Party');
-    })
-
-    const joinButton = driver.findElement(By.id('join-group'));
-    joinButton.click()
-        .then(() => {
-        driver.sleep(1000) ;
-        })
-        .then(() => {
-        const element = driver.findElement(By.id('page-title'));
-        element.getText().then((text) => {
-          expect(text).toBe('Join Room');
-        })
-        const backButton = driver.findElement(By.id('back'));
-        backButton.click()
-            .then(() => {
-              driver.sleep(1000) ;
-            })
-            .then(() => {
-              const createButton = driver.findElement(By.id('create-group'));
-              createButton.click()
-                  .then(() => {
-                    driver.sleep(1000)
-                  })
-                  .then(() => {
-                    const element = driver.findElement(By.id('page-title'));
-                    element.getText()
-                        .then((text) => {
-                          expect(text).toBe('Create Room');
-                        })
-                    const backButton = driver.findElement(By.id('back'));
-                    backButton.click()
-                        .then(() => {
-                          driver.sleep(1000) ;
-                        })
-                        .then(() => {
-                          const createButton = driver.findElement(By.id('login-button'));
-                          createButton.click()
-                              .then(() => {
-                                driver.sleep(1000)
-                              })
-                              .then(() => {
-                                const element = driver.findElement(By.id('page-title'));
-                                element.getText()
-                                    .then((text) => {
-                                      expect(text).toBe('Sign In');
-                                    })
-                                const backButton = driver.findElement(By.id('back'));
-                                backButton.click()
-                                    .then(() => {
-                                      driver.sleep(1000) ;
-                                    })
-                                    .then(() => {
-                                      const element = driver.findElement(By.id('page-title'));
-                                      element.getText()
-                                          .then((text) => {
-                                            expect(text).toBe('House Party');
-                                          })
-                                    })
-                              })
-                        })
-                  })
-        })
-      })
-  })
-
 
   it("Can log in successfully", () => {
     driver.get('http://127.0.0.1:8000/login');
@@ -140,6 +69,91 @@ describe("Check main functionality", () => {
 
 
   })
+
+
+  it("Loads successfully", () => {
+    driver.get('http://127.0.0.1:8000/');
+
+    const element = driver.findElement(By.id('page-title'));
+    element.getText().then(function(text) {
+      expect(text).toBe('House Party');
+    })
+      const createButton = driver.findElement(By.id('login-button'));
+                          createButton.click()
+                              .then(() => {
+                                driver.sleep(1000)
+                              })
+                              .then(() => {
+                                const element = driver.findElement(By.id('page-title'));
+                                element.getText()
+                                    .then((text) => {
+                                      expect(text).toBe('Sign In');
+                                    })
+                                const username = Math.random().toString(36).substr(2, 7)
+                                const password = Math.random().toString(36).substr(2, 8)
+                                driver.findElement(By.name('username')).sendKeys(username);
+                                driver.findElement(By.name('password')).sendKeys(password);
+                                driver.findElement(By.name('switch')).click();
+                                driver.findElement(By.name('signin')).click();
+                                //expect(driver.findElement(By.xpath("//*[text()='Signed up in successfully']")).isDisplayed()).toBeTruthy();
+                                driver.findElement(By.id('back')).click()
+                                    .then(() => {
+                                        driver.sleep(1000) ;
+                                    })
+                                    .then(() => {
+                                        const joinButton = driver.findElement(By.id('join-group'));
+                                        joinButton.click()
+                                            .then(() => {
+                                            driver.sleep(1000) ;
+                                            })
+                                            .then(() => {
+                                            const element = driver.findElement(By.id('page-title'));
+                                            element.getText().then((text) => {
+                                              expect(text).toBe('Join Room');
+                                            })
+                                            const backButton = driver.findElement(By.id('back'));
+                                            backButton.click()
+                                                .then(() => {
+                                                  driver.sleep(1000) ;
+                                                })
+                                                .then(() => {
+                                                  const createButton = driver.findElement(By.id('create-group'));
+                                                  createButton.click()
+                                                      .then(() => {
+                                                        driver.sleep(1000)
+                                                      })
+                                                      .then(() => {
+                                                        const element = driver.findElement(By.id('page-title'));
+                                                        element.getText()
+                                                            .then((text) => {
+                                                              expect(text).toBe('Create Room');
+                                                            })
+                                                        const backButton = driver.findElement(By.id('back'));
+                                                        backButton.click()
+                                                            .then(() => {
+                                                              driver.sleep(1000) ;
+                                                            })
+                                                            .then(() => {
+                                                              const logOutButton = driver.findElement(By.id('login-button'));
+                                                              createButton.click()
+                                                                  .then(() => {
+                                                                    driver.sleep(1000)
+                                                                  })
+                                                                  .then(() => {
+                                                                      const element = driver.findElement(By.id('page-title'));
+                                                                      element.getText()
+                                                                          .then((text) => {
+                                                                              expect(text).toBe('House Party');
+                                                                          })
+                                                                  })
+                                                            })
+                                                      })
+                                            })
+                                          })
+                                    })
+                              })
+  })
+
 
 
   it("Can join a room successfully", () =>{
@@ -241,7 +255,7 @@ describe("Check main functionality", () => {
 
   afterAll(async () => {
     await driver.quit();
-  }, 15000);
+  }, 150000);
 
 })
 
