@@ -21,15 +21,21 @@ export  default class HomePage extends Component {
         this.getUsername = this.getUsername.bind(this);
         this._joinButton = this._joinButton.bind(this);
         this._createButton = this._createButton.bind(this);
+        this.username = this.username.bind(this);
+        this.componentDidMount = this.componentDidMount.bind(this);
     }
 
-    async componentDidMount() {
+    componentDidMount() {
 
         const uname = localStorage.getItem('username');
-        console.log("username is " + uname)
+        //console.log("username is " + uname)
         this.setState({
             username: (uname == null) ? "" : uname,
         });
+    }
+
+    username(){
+        return this.state.username;
     }
 
     getUsername(username) {

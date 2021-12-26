@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'django.contrib.admindocs',
     #'dj_rest_auth.registration',
 ]
 
@@ -135,7 +136,7 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#SITE_ID = 1
+SITE_ID = 1
 
 #ACCOUNT_LOGOUT_ON_GET = True
 

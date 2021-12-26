@@ -155,37 +155,6 @@ describe("Check main functionality", () => {
   })
 
 
-
-  it("Can join a room successfully", () =>{
-      driver.get('http://127.0.0.1:8000/join');
-      const element = driver.findElement(By.id('page-title'));
-      element.getText().then(function(text) {
-          expect(text).toBe('Join a Room');
-      })
-      driver.findElement(By.name('roomName')).sendKeys("ABCDEF");
-      driver.findElement(By.name('enter')).click()
-          .then(() => {
-              driver.sleep(1000)
-          })
-          .then(() => {
-              const code = driver.findElement(By.name('code'));
-              code.getText().then(function(text) {
-                  expect(text).toBe('ABCDEF');
-              });
-              driver.findElement(By.name('leave')).click()
-                  .then(() => {
-                      driver.sleep(1000)
-                  })
-                  .then(() => {
-                      const element = driver.findElement(By.id('page-title'));
-                      element.getText().then(function(text) {
-                          expect(text).toBe('House Party');
-                      })
-                  })
-          })
-
-  })
-
     it("Can join a room successfully", () =>{
       driver.get('http://127.0.0.1:8000/join');
       const element = driver.findElement(By.id('page-title'));

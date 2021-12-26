@@ -11,16 +11,27 @@ from rest_framework.response import Response
 
 
 class RoomView(generics.ListAPIView):
+    """
+    Returns all Room objects
+    """
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
 
 
 class UserView(generics.ListAPIView):
+    """
+    Returns all User objects
+    """
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
 class GetRoom(APIView):
+    """
+    GET method
+    Receives the code of a Room
+    Returns the room attributes if the current User is the host
+    """
     serializer_class = RoomSerializer
     lookup_url_kwarg = 'code'
 
@@ -39,6 +50,11 @@ class GetRoom(APIView):
 
 
 class CreateRoomView(APIView):
+    """
+    POST method
+    Receives Room parameters: guest_can_pause, votes_to_skip
+    Creates a room and returns it
+    """
     serializer_class = CreateRoomSerializer
 
     def post(self, request, format=None):
@@ -63,6 +79,11 @@ class CreateRoomView(APIView):
 
 
 class JoinRoom(APIView):
+    """
+    POST method
+    Receives a Room code
+    Checks if the Room can be joined
+    """
     lookup_url_kwarg = 'code'
 
     def post(self, request, format=None):
@@ -79,6 +100,11 @@ class JoinRoom(APIView):
 
 
 class LeaveRoom(APIView):
+    """
+    POST method
+    Receives a Room code
+    If the User is the host deletes the Room
+    """
     lookup_url_kwarg = 'code'
     def post(self, request, format=None):
         if not request.user.is_authenticated:
@@ -96,6 +122,11 @@ class LeaveRoom(APIView):
 
 
 class UpdateRoom(APIView):
+    """
+    PATCH method
+    Receives a Room code and new room parameters: guest_can_pause, votes_to_skip
+    If Room exists and the User is the host updates the room with new parameters
+    """
     serializerClass = UpdateRoomSerializer
 
     def patch(self, request, format=None):
@@ -121,16 +152,21 @@ class UpdateRoom(APIView):
 
 
 class Registration(APIView):
+    """
+    POST method
+    Receives username and password
+    If a user with this credentials does not exists and if no user is authenticated, creates a new one
+    """
     serializerClass = RegisterUserSerializer
 
     def post(self, request, format=None):
+        if request.user.is_authenticated:
+            return Response({'Bad Request': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
         serializer = self.serializerClass(data=request.data)
         if serializer.is_valid():
             username = serializer.data.get('username')
             password = serializer.data.get('password')
             queryset = User.objects.filter(username=username)
-            if queryset.exists():
-                return Response({'Message': "User with this name already exists"}, status=status.HTTP_409_CONFLICT)
             User.objects.create_user(username=username, password=password)
             user = User.objects.filter(username=username)
             token = Token.objects.create(user=user[0])
