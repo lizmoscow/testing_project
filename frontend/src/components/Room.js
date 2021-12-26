@@ -28,13 +28,12 @@ export default class Room extends Component {
     getRoomDetails() {
          const requestOptions = {
             method: "GET",
-            credentials: 'omit',
+            //credentials: 'omit',
             headers: {"Authorization": "Token " + this.state.token}
         };
         fetch("/api/get_room" + "?code=" + this.roomCode, requestOptions)
             .then((response) => {
                 if (!response.ok) {
-                    this.props.leaveRoomCallback();
                     this.props.history.push("/");
                 }
                 return response.json();
@@ -54,10 +53,12 @@ export default class Room extends Component {
             credentials: 'omit',
             headers: {"Content-Type": "application/json",
                 "Authorization": "Token " + this.state.token},
+            body: JSON.stringify({
+                code: this.roomCode,
+            })
         };
         fetch('/api/leave_room', requestOptions)
             .then((_response) => {
-                this.props.leaveRoomCallback();
                 this.props.history.push('/')
             });
     }

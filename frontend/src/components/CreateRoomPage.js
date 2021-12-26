@@ -51,7 +51,7 @@ export  default class CreateRoomPage extends Component {
 
     handleGuestCanPauseChange(e) {
         this.setState({
-            guestCanPause: e.target.value === "true" ? true : false,
+            guestCanPause: e.target.value === "true",
         });
     }
 
@@ -163,16 +163,16 @@ export  default class CreateRoomPage extends Component {
                     <FormHelperText>
                             Guest Control of Playback State
                     </FormHelperText>
-                    <RadioGroup row defaultValue={this.props.guestCanPause.toString()}
+                    <RadioGroup row defaultValue={this.state.guestCanPause.toString()}
                     onChange={this.handleGuestCanPauseChange}>
                         <FormControlLabel
-                            value={(this.props.guestCanPause) ? "true" : "false"}
+                            value="true"
                             control={<Radio color="primary"/>}
                             label="Play/Pause"
                             labelPlacement="bottom"
                             name="giveGuestControl"/>
                         <FormControlLabel
-                            value={(this.props.guestCanPause) ? "false" : "true"}
+                            value="false"
                             control={<Radio color="secondary"/>}
                             label="No Control"
                             labelPlacement="bottom"

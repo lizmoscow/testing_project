@@ -13,11 +13,9 @@ export  default class HomePage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            roomCode: null,
             username: this.props.username,
             error: "",
         };
-        this.clearRoomCode = this.clearRoomCode.bind(this);
         this._logInButton = this._logInButton.bind(this);
         this._logOut = this._logOut.bind(this);
         this.getUsername = this.getUsername.bind(this);
@@ -26,16 +24,6 @@ export  default class HomePage extends Component {
     }
 
     async componentDidMount() {
-         const requestOptions = {
-            method: "GET",
-            credentials: 'omit',
-        };
-        fetch('/api/user_in_room', requestOptions)
-            .then((response) => response.json())
-            .then((data) => {this.setState({
-                roomCode: data.code,
-                });
-            });
 
         const uname = localStorage.getItem('username');
         console.log("username is " + uname)
@@ -47,12 +35,6 @@ export  default class HomePage extends Component {
     getUsername(username) {
         this.setState({
             username: username,
-        });
-    }
-
-    clearRoomCode() {
-        this.setState({
-            roomCode: null,
         });
     }
 
@@ -137,10 +119,7 @@ export  default class HomePage extends Component {
                 <Route path='/login' render={(props) => {
                            return <LogIn {...props} logInCallback={this.getUsername} />
                        }} />
-                <Route path='/room/:roomCode'
-                       render={(props) => {
-                           return <Room {...props} leaveRoomCallback={this.clearRoomCode} />
-                       }}/>
+                <Route path='/room/:roomCode' component={Room} />
             </Switch>
         </Router>;
     }

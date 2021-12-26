@@ -1,38 +1,58 @@
 from django.test import TestCase
-from django.urls import reverse
-from django.conf import settings
-from api.models import Room
+from django.contrib.auth.models import User
+from api.models import Room, generate_unique_code
+from rest_framework.test import force_authenticate, APIRequestFactory
+from .views import CreateRoomView, GetRoom, JoinRoom, LeaveRoom, UpdateRoom, Registration
 from api.serializers import RoomSerializer
 
 
 class RoomTestCase(TestCase):
     def setUp(self):
-        Room.objects.create(host="Alice", guest_can_pause=True, votes_to_skip=6)
-        Room.objects.create(host="Bob", guest_can_pause=False, votes_to_skip=4)
-        Room.objects.create(host="Charlie", guest_can_pause=False, votes_to_skip=10)
-        Room.objects.create(host="Dave", guest_can_pause=True, votes_to_skip=1)
+        User.objects.create_user(username="Alice", email="a@a.a", password="aaaaaaaa")
+        Room.objects.create(host=User.objects.filter(username="Alice")[0], guest_can_pause=True, votes_to_skip=6)
+        User.objects.create_user(username="Bob", email="b@b.b", password="bbbbbbbb")
+        Room.objects.create(host=User.objects.filter(username="Bob")[0], guest_can_pause=False, votes_to_skip=4)
+        User.objects.create_user(username="Charlie", email="c@c.c", password="ccccccc")
+        Room.objects.create(host=User.objects.filter(username="Charlie")[0], guest_can_pause=False, votes_to_skip=10)
+        User.objects.create_user(username="Dave", email="d@d.d", password="ddddddd")
+        Room.objects.create(host=User.objects.filter(username="Dave")[0], guest_can_pause=True, votes_to_skip=1)
 
     def test_generate_unique_code(self):
-        room = Room.objects.filter(host='Alice')
+        room = Room.objects.filter(host=User.objects.filter(username="Alice")[0])
         self.assertEqual(len(room), 1)
         same_code_rooms = Room.objects.filter(code=room[0].code)
         self.assertEqual(len(same_code_rooms), 1)
 
 
 class GetRoomTestCase(TestCase):
+    factory = APIRequestFactory()
+
+    def setUp(self):
+        self.user = User.objects.create_user(username="Alice", email="a@a.a", password="aaaaaaaa")
+        self.room = Room.objects.create(host=self.user, guest_can_pause=True, votes_to_skip=6)
+
+    def test_get_room_not_authenticated(self):
+        request = self.factory.get('/get_room')
+        response = GetRoom.as_view()(request)
+        self.assertEqual(response.status_code, 403)
+
     def test_get_room_no_code(self):
-        response = self.client.get(reverse('get_room'))
+        request = self.factory.get('/get_room')
+        force_authenticate(request, user=self.user)
+        response = GetRoom.as_view()(request)
         self.assertEqual(response.status_code, 400)
 
     def test_get_room_wrong_code(self):
-        response = self.client.get(reverse('get_room'), {'code': 'ABCDEF'})
+        request = self.factory.get('/get_room?code=ABCDEF')
+        force_authenticate(request, user=self.user)
+        response = GetRoom.as_view()(request)
         self.assertEqual(response.status_code, 404)
 
     def test_get_room_existing_code(self):
-        Room.objects.create(host="Alice", guest_can_pause=True, votes_to_skip=6)
-        room = Room.objects.filter(host='Alice')[0]
-        data = RoomSerializer(room).data
-        response = self.client.get(reverse('get_room'), {'code': room.code})
+        data = RoomSerializer(self.room).data
+        request = self.factory.get(f'/get_room?code={self.room.code}')
+        force_authenticate(request, user=self.user)
+        response = GetRoom.as_view()(request)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, data['host'])
         self.assertContains(response, data['votes_to_skip'])
@@ -41,125 +61,185 @@ class GetRoomTestCase(TestCase):
 
 
 class CreateRoomTestCase(TestCase):
+    factory = APIRequestFactory()
+
+    def setUp(self):
+        self.user = User.objects.create_user(username="Alice", email="a@a.a", password="aaaaaaaa")
+
+    def test_create_room_not_authenticated(self):
+        request = self.factory.post('/create_room', {'votes_to_skip': 'Alice'})
+        response = CreateRoomView.as_view()(request)
+        self.assertEqual(response.status_code, 403)
 
     def test_create_room_incorrect_data(self):
-        response = self.client.post(reverse('create_room'), {'votes_to_skip': 'Alice'})
+        request = self.factory.post('/create_room', {'votes_to_skip': 'Alice'})
+        force_authenticate(request, user=self.user)
+        response = CreateRoomView.as_view()(request)
         self.assertEqual(response.status_code, 400)
 
     def test_create_new_room(self):
-        session = self.client.session
-        self.client.cookies[settings.SESSION_COOKIE_NAME] = session.session_key
-        response = self.client.post(reverse('create_room'), {'votes_to_skip': '4', 'guest_can_pause': 'true'})
+        request = self.factory.post('/create_room', {'votes_to_skip': '4', 'guest_can_pause': 'True'})
+        force_authenticate(request, user=self.user)
+        response = CreateRoomView.as_view()(request)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(len(Room.objects.filter(votes_to_skip='4')), 1)
         room = Room.objects.filter(votes_to_skip='4')[0]
-        self.assertEqual(room.host, session.session_key)
+        self.assertEqual(room.host, self.user)
         self.assertEqual(room.votes_to_skip, 4)
         self.assertEqual(room.guest_can_pause, True)
 
     def test_create_existing_room(self):
-        session = self.client.session
-        self.client.cookies[settings.SESSION_COOKIE_NAME] = session.session_key
-        Room.objects.create(host=session.session_key, guest_can_pause=False, votes_to_skip=6)
-        response = self.client.post(reverse('create_room'), {'votes_to_skip': '4', 'guest_can_pause': 'True'})
+        self.room = Room.objects.create(host=self.user, guest_can_pause=False, votes_to_skip=6)
+        request = self.factory.post('/create_room', {'votes_to_skip': '4', 'guest_can_pause': 'True'})
+        force_authenticate(request, user=self.user)
+        response = CreateRoomView.as_view()(request)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(len(Room.objects.filter(votes_to_skip='4')), 1)
         room = Room.objects.filter(votes_to_skip='4')[0]
-        self.assertEqual(room.host, session.session_key)
+        self.assertEqual(room.host, self.user)
         self.assertEqual(room.votes_to_skip, 4)
         self.assertEqual(room.guest_can_pause, True)
 
 
 class JoinRoomTestCase(TestCase):
+    factory = APIRequestFactory()
+
+    def setUp(self):
+        self.userA = User.objects.create_user(username="Alice", email="a@a.a", password="aaaaaaaa")
+        self.userB = User.objects.create_user(username="Bob", email="b@b.b", password="bbbbbbbb")
+        self.room = Room.objects.create(host=User.objects.filter(username="Bob")[0], guest_can_pause=False, votes_to_skip=4)
+
+    def test_join_room_not_authenticated(self):
+        request = self.factory.post('/join_room', {'code': self.room.code})
+        response = JoinRoom.as_view()(request)
+        self.assertEqual(response.status_code, 403)
 
     def test_join_room_incorrect_data_code_none(self):
-        response = self.client.post(reverse('join_room'))
+        request = self.factory.post('/join_room')
+        force_authenticate(request, user=self.userA)
+        response = JoinRoom.as_view()(request)
         self.assertEqual(response.status_code, 400)
 
     def test_join_room_incorrect_data_short_code(self):
-        response = self.client.post(reverse('join_room'), {'code': 'ABCD'})
+        request = self.factory.post('/join_room', {'code': 'ABCD'})
+        force_authenticate(request, user=self.userA)
+        response = JoinRoom.as_view()(request)
         self.assertEqual(response.status_code, 400)
 
     def test_join_room_incorrect_data_long_code(self):
-        response = self.client.post(reverse('join_room'), {'code': 'ABCDEFGH'})
+        request = self.factory.post('/join_room', {'code': 'ABCDEFGH'})
+        force_authenticate(request, user=self.userA)
+        response = JoinRoom.as_view()(request)
         self.assertEqual(response.status_code, 400)
 
     def test_join_room_incorrect_data_nonexisting_code(self):
-        response = self.client.post(reverse('join_room'), {'code': 'ABCDEF'})
+        request = self.factory.post('/join_room', {'code': generate_unique_code()})
+        force_authenticate(request, user=self.userA)
+        response = JoinRoom.as_view()(request)
         self.assertEqual(response.status_code, 400)
 
     def test_join_room_incorrect_data_lowercase_code(self):
-        response = self.client.post(reverse('join_room'), {'code': 'abcdef'})
+        request = self.factory.post('/join_room', {'code': 'abcdef'})
+        force_authenticate(request, user=self.userA)
+        response = JoinRoom.as_view()(request)
         self.assertEqual(response.status_code, 400)
 
     def test_join_room_correct_data_existing_code(self):
-        Room.objects.create(code='ABCDEF', host='Alice', guest_can_pause=False, votes_to_skip=6)
-        response = self.client.post(reverse('join_room'), {'code': 'ABCDEF'})
-        session = self.client.session
+        request = self.factory.post('/join_room', {'code': self.room.code})
+        force_authenticate(request, user=self.userA)
+        response = JoinRoom.as_view()(request)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Room Joined')
-        self.assertEqual(session['room_code'], 'ABCDEF')
-
-
-class UserInRoomTestCase(TestCase):
-    def test_user_in_room(self):
-        session = self.client.session
-        session['room_code'] = 'ABCDEF'
-        session.save()
-        response = self.client.get(reverse('user_in_room'))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'ABCDEF')
-
-    def test_user_not_in_room(self):
-        response = self.client.get(reverse('user_in_room'))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'null', response.content)
 
 
 class LeaveRoomTestCase(TestCase):
-    def test_user_in_room(self):
-        session = self.client.session
-        session['room_code'] = 'ABCDEF'
-        session.save()
-        response = self.client.post(reverse('leave_room'))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Success', response.content)
+    factory = APIRequestFactory()
 
-    def test_user_not_in_room(self):
-        response = self.client.post(reverse('leave_room'))
+    def setUp(self):
+        self.userA = User.objects.create_user(username="Alice", email="a@a.a", password="aaaaaaaa")
+        self.userB = User.objects.create_user(username="Bob", email="b@b.b", password="bbbbbbbb")
+        self.room = Room.objects.create(host=User.objects.filter(username="Bob")[0], guest_can_pause=False, votes_to_skip=4)
+
+    def test_leave_room_not_authenticated(self):
+        request = self.factory.post('/leave_room', {'code': self.room.code})
+        response = LeaveRoom.as_view()(request)
+        self.assertEqual(response.status_code, 403)
+
+    def test_leave_room_wrong_format(self):
+        request = self.factory.post('/leave_room')
+        force_authenticate(request, user=self.userA)
+        response = LeaveRoom.as_view()(request)
+        self.assertEqual(response.status_code, 400)
+
+    def test_leave_room_wrong_code(self):
+        request = self.factory.post('/leave_room', {'code': generate_unique_code()})
+        force_authenticate(request, user=self.userA)
+        response = LeaveRoom.as_view()(request)
+        self.assertEqual(response.status_code, 400)
+
+    def test_leave_room_user_is_not_host(self):
+        code = self.room.code
+        request = self.factory.post('/leave_room', {'code': code})
+        force_authenticate(request, user=self.userA)
+        response = LeaveRoom.as_view()(request)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Success', response.content)
+        self.assertEqual(len(Room.objects.filter(code=code)), 1)
+
+    def test_leave_room_user_is_host(self):
+        code = self.room.code
+        request = self.factory.post('/leave_room', {'code': code})
+        force_authenticate(request, user=self.userB)
+        response = LeaveRoom.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(Room.objects.filter(code=code)), 0)
 
 
 class UpdateRoomTestCase(TestCase):
+    factory = APIRequestFactory()
+
+    def setUp(self):
+        self.userA = User.objects.create_user(username="Alice", email="a@a.a", password="aaaaaaaa")
+        self.userB = User.objects.create_user(username="Bob", email="b@b.b", password="bbbbbbbb")
+        self.room = Room.objects.create(host=User.objects.filter(username="Bob")[0], guest_can_pause=False, votes_to_skip=4)
+
+    def test_update_room_not_authenticated(self):
+        request = self.factory.patch('/update_room', {'code': self.room.code,
+                                                     'votes_to_skip': '4',
+                                                     'guest_can_pause': 'True'})
+        response = UpdateRoom.as_view()(request)
+        self.assertEqual(response.status_code, 403)
 
     def test_update_room_incorrect_data(self):
-        response = self.client.patch(reverse('update_room'))
+        request = self.factory.patch('/update_room')
+        force_authenticate(request, user=self.userA)
+        response = UpdateRoom.as_view()(request)
         self.assertEqual(response.status_code, 400)
 
     def test_update_new_room(self):
-        response = self.client.patch(reverse('update_room'), {'votes_to_skip': '4',
-                                                              'guest_can_pause': 'true',
-                                                              'code': 'ABCDEF'}, content_type='application/json')
+        request = self.factory.patch('/update_room', {'votes_to_skip': '4',
+                                                      'guest_can_pause': 'true',
+                                                      'code': generate_unique_code()})
+        force_authenticate(request, user=self.userA)
+        response = UpdateRoom.as_view()(request)
         self.assertEqual(response.status_code, 404)
 
     def test_update_someone_elses_room(self):
-        Room.objects.create(code='ABCDEF', host='Alice', guest_can_pause=False, votes_to_skip=6)
-        response = self.client.patch(reverse('update_room'), {'votes_to_skip': '4',
-                                                              'guest_can_pause': 'true',
-                                                              'code': 'ABCDEF'}, content_type='application/json')
+        request = self.factory.patch('/update_room', {'votes_to_skip': '4',
+                                                      'guest_can_pause': 'true',
+                                                      'code': self.room.code})
+        force_authenticate(request, user=self.userA)
+        response = UpdateRoom.as_view()(request)
         self.assertEqual(response.status_code, 403)
 
     def test_update_existing_room(self):
-        session = self.client.session
-        self.client.cookies[settings.SESSION_COOKIE_NAME] = session.session_key
-        Room.objects.create(code='ABCDEF', host=session.session_key, guest_can_pause=False, votes_to_skip=6)
-        response = self.client.patch(reverse('update_room'), {'votes_to_skip': '4',
-                                                              'guest_can_pause': 'True',
-                                                              'code': 'ABCDEF'}, content_type='application/json')
+        request = self.factory.patch('/update_room', {'votes_to_skip': '4',
+                                                      'guest_can_pause': 'true',
+                                                      'code': self.room.code})
+        force_authenticate(request, user=self.userB)
+        response = UpdateRoom.as_view()(request)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(Room.objects.filter(code='ABCDEF')), 1)
-        room = Room.objects.filter(code='ABCDEF')[0]
-        self.assertEqual(room.host, session.session_key)
+        self.assertEqual(len(Room.objects.filter(code=self.room.code)), 1)
+        room = Room.objects.filter(code=self.room.code)[0]
+        self.assertEqual(room.host, self.userB)
         self.assertEqual(room.votes_to_skip, 4)
         self.assertEqual(room.guest_can_pause, True)

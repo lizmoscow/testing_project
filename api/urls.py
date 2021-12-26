@@ -1,6 +1,6 @@
 import rest_framework.authtoken.views
 from django.urls import path, include
-from .views import RoomView, CreateRoomView, GetRoom, JoinRoom, UserInRoom, LeaveRoom, UpdateRoom, Registration, UserView
+from .views import RoomView, CreateRoomView, GetRoom, JoinRoom, LeaveRoom, UpdateRoom, Registration, UserView
 
 
 urlpatterns = [
@@ -9,7 +9,6 @@ urlpatterns = [
     path('create_room', CreateRoomView.as_view(), name='create_room'),
     path('get_room', GetRoom.as_view(), name='get_room'),
     path('join_room', JoinRoom.as_view(), name='join_room'),
-    path('user_in_room', UserInRoom.as_view(), name='user_in_room'),
     path('leave_room', LeaveRoom.as_view(), name='leave_room'),
     path('update_room', UpdateRoom.as_view(), name='update_room'),
     path('auth', include('rest_framework.urls')),
