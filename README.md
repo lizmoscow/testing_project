@@ -4,7 +4,7 @@ This is a project for the software-testing course
 
 gitPages: https://lizmoscow.github.io/testing_project/
 
-###To run tests:
+### To run tests:
 
 *   Backend tests: `python3 manage.py test`
 	* Specific test case: `python3 manage.py test api.tests.<TestCaseName>`
@@ -13,7 +13,7 @@ gitPages: https://lizmoscow.github.io/testing_project/
 	* Component and e2e tests with Selenide: `npm run test`
 	* e2e tests with Cypress: `npm run e2e`
 	
-###Tests that have yet to be written:
+### Tests that have yet to be written:
 
 *	Component tests:
 	 * Frontend:
@@ -29,6 +29,6 @@ gitPages: https://lizmoscow.github.io/testing_project/
 	 * Trying to register with incorrect / already existing data
 	 * Visiting pages Room, Create a Room, Edit the room as an unauthorised guest
 	 	
-###Test documentation 
+### Test documentation 
 
 Documentation for api module is located in file `api/documentation.md` generated with `inkpot` library
