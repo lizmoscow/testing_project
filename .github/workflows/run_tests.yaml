@@ -17,13 +17,6 @@ jobs:
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
-        with:
-          python-version: '3.9.x'
-      - run: python -m pip install --upgrade pip
-      - run: python -m pip install -r requirements.txt
-      - working-directory: ./
-        run: python manage.py runserver
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
@@ -32,6 +25,18 @@ jobs:
       - working-directory: ./frontend
         run: npm run dev
       - working-directory: ./frontend
-        run: npm run test
+        run: npm run test CreateRoomPage.test.js LogIn.test.js
+  e2e_testing:
+    runs-on: macos-11
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
       - working-directory: ./frontend
-        run: npm run e2e
+        run: npm install
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          build: npm run dev
+          start: npm run e2e
