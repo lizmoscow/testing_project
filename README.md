@@ -32,3 +32,33 @@ gitPages: https://lizmoscow.github.io/testing_project/
 ### Test documentation 
 
 Documentation for api module is located in file `api/documentation.md` generated with `inkpot` library
+
+
+### Finished tasks
+
+- [x] Lesson 2
+  - [x] Main 
+  - [x] Advanced 
+  - [x] Bonus
+- [ ] Lesson 4
+  - [x] Main 
+  - [x] Advanced 
+  - [ ] Bonus
+- [ ] Lesson 5
+  - [x] Main 
+  - [ ] Advanced 
+  - [ ] Bonus
+- [ ] Lesson 6
+  - [ ] Bonus
+- [ ] Lesson 7
+  - [ ] Bonus
+- [ ] Lesson 8
+  - [ ] Bonus
+- [ ] Lesson 9
+  - [x] Main 
+  - [ ] Advanced 
+  - [ ] Bonus
+- [ ] Lesson 10
+  - [ ] Main 
+  - [ ] Advanced 
+  - [ ] Bonus
