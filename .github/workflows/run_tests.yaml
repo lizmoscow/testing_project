@@ -26,17 +26,3 @@ jobs:
         run: npm run dev
       - working-directory: ./frontend
         run: npm run test CreateRoomPage.test.js LogIn.test.js
-  e2e_testing:
-    runs-on: macos-11
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14.x'
-      - working-directory: ./frontend
-        run: npm install
-      - uses: cypress-io/github-action@v2
-        with:
-          working-directory: ./frontend
-          build: npm run dev
-          start: npm start
