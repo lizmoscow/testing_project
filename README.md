@@ -4,6 +4,8 @@ This is a project for the software-testing course
 
 gitPages: https://lizmoscow.github.io/testing_project/
 
+the progect is deployed in https://software-testing-project.herokuapp.com/
+
 ### To run tests:
 
 *   Backend tests: `python3 manage.py test`
