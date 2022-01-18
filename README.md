@@ -46,7 +46,7 @@ Documentation for api module is located in file `api/documentation.md` generated
   - [ ] Bonus
 - [ ] Lesson 5
   - [x] Main 
-  - [ ] Advanced 
+  - [x] Advanced 
   - [ ] Bonus
 - [ ] Lesson 6
   - [ ] Bonus
