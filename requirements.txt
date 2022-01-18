@@ -3,3 +3,4 @@ djangorestframework~=3.12.4
 mock~=4.0.3
 django-allauth~=0.44.0
 django-heroku
+gunicorn~=20.1.0
